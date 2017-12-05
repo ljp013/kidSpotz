@@ -1,4 +1,4 @@
-package com.example.mapwithmarker;
+package com.example.kidspotz;
 
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
