@@ -16,6 +16,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonPoint;
+import com.google.maps.android.data.geojson.GeoJsonPointStyle;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -25,6 +30,8 @@ import android.location.Location;
 
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.FusedLocationProviderApi;
+
+import java.util.HashMap;
 
 /**
  * An activity that displays a Google map with a marker (pin) to indicate a particular location.
@@ -128,11 +135,17 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
         mLastLocation = location;
         userLoc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
-        map.addMarker(new MarkerOptions().position(userLoc)
+        Marker myMarker = map.addMarker(new MarkerOptions().position(userLoc)
                 .title("You Are Here"));
+        myMarker.showInfoWindow();
         map.setMaxZoomPreference(30.0f);
-        map.setMaxZoomPreference(10.0f);
+        map.setMinZoomPreference(10.0f);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 20.0f));
+
+        GeoJsonPoint point = new GeoJsonPoint(userLoc);
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put("Ocean", "South Atlantic");
+        GeoJsonFeature pointFeature = new GeoJsonFeature(point, "Origin", properties, null);
 
     }
 
@@ -153,11 +166,11 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
         //
         map = googleMap;
         if (userLoc != null) {
-            googleMap.addMarker(new MarkerOptions().position(userLoc)
+            Marker myMarker = googleMap.addMarker(new MarkerOptions().position(userLoc)
                     .title("You are here"));
-            googleMap.setMaxZoomPreference(20.0f);
-            googleMap.setMaxZoomPreference(10.0f);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15.0f));
+            googleMap.setMaxZoomPreference(30.0f);
+            googleMap.setMinZoomPreference(10.0f);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 20.0f));
 
         }
         else {

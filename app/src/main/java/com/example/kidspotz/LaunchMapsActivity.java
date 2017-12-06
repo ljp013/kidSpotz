@@ -8,6 +8,6 @@ public class LaunchMapsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.launch_maps);
+        setContentView(R.layout.activity_launch_maps);
     }
 }
