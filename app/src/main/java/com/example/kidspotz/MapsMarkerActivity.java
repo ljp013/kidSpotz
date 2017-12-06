@@ -159,8 +159,8 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
         map = googleMap;
         if (userLoc != null) {
             myMarker = googleMap.addMarker(new MarkerOptions().position(userLoc)
-                    .title("You are here"));
-            googleMap.setMaxZoomPreference(20.0f);
+                    .title("You are here").snippet("Learn more: website"));
+            googleMap.setMaxZoomPreference(30.0f);
             googleMap.setMinZoomPreference(5.0f);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15.0f));
 
