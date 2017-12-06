@@ -45,6 +45,7 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
     LocationRequest mLocationRequest;
     private FusedLocationProviderApi mFusedLocationApi;
     static int REQUEST_LOCATION = 2;
+    Marker myMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +112,7 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
             mFusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             mLastLocation = mFusedLocationApi.getLastLocation(mGoogleApiClient);
             userLoc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            onMapReady(map);
         }
     }
 
@@ -135,17 +137,7 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
         mLastLocation = location;
         userLoc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
-        Marker myMarker = map.addMarker(new MarkerOptions().position(userLoc)
-                .title("You Are Here"));
-        myMarker.showInfoWindow();
-        map.setMaxZoomPreference(30.0f);
-        map.setMinZoomPreference(10.0f);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 20.0f));
-
-        GeoJsonPoint point = new GeoJsonPoint(userLoc);
-        HashMap<String, String> properties = new HashMap<String, String>();
-        properties.put("Ocean", "South Atlantic");
-        GeoJsonFeature pointFeature = new GeoJsonFeature(point, "Origin", properties, null);
+        onMapReady(map);
 
     }
 
@@ -166,11 +158,16 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
         //
         map = googleMap;
         if (userLoc != null) {
-            Marker myMarker = googleMap.addMarker(new MarkerOptions().position(userLoc)
+            myMarker = googleMap.addMarker(new MarkerOptions().position(userLoc)
                     .title("You are here"));
-            googleMap.setMaxZoomPreference(30.0f);
-            googleMap.setMinZoomPreference(10.0f);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 20.0f));
+            googleMap.setMaxZoomPreference(20.0f);
+            googleMap.setMinZoomPreference(5.0f);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15.0f));
+
+            GeoJsonPoint point = new GeoJsonPoint(userLoc);
+            HashMap<String, String> properties = new HashMap<String, String>();
+            properties.put("Ocean", "South Atlantic");
+            GeoJsonFeature pointFeature = new GeoJsonFeature(point, "Origin", properties, null);
 
         }
         else {
