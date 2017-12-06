@@ -1,4 +1,3 @@
-/*
 package com.example.kidspotz;
 
 import android.support.v7.app.AppCompatActivity;
@@ -11,5 +10,5 @@ public class LaunchMapsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch_maps);
     }
-}*/
+}
 

@@ -25,6 +25,11 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <meta-data
+            android:name="com.google.android.places.API_KEY"
+            android:value="AIzaSyDbYoZGqRXyVUc1t6AT8eEzxqZm1qCXct0 " />
+
+
         <activity
             android:name="com.example.kidspotz.MapsMarkerActivity"
             android:label="@string/app_name">
