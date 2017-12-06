@@ -1,4 +1,4 @@
-package com.example.anushikhasharma.childsplay;
+package com.example.kidspotz;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -13,9 +13,6 @@ import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.data.geojson.GeoJsonPoint;
 import com.google.maps.android.data.geojson.GeoJsonPointStyle;
-
-import android.content.Intent;
-import android.net.Uri;
 
 import java.util.HashMap;
 

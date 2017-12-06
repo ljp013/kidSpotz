@@ -1,4 +1,4 @@
-package com.example.mapwithmarker;
+package com.example.kidspotz;
 
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationListener;
 import android.location.Location;
 
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderApi;
 
 /**
