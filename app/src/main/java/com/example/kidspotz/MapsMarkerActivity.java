@@ -1,12 +1,16 @@
-package com.example.mapwithmarker;
+package com.example.kidspotz;
 
+import android.view.View;
+import android.net.Uri;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationRequest;
@@ -16,6 +20,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonPoint;
+import com.google.maps.android.data.geojson.GeoJsonPointStyle;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -24,8 +33,15 @@ import com.google.android.gms.location.LocationListener;
 import android.location.Location;
 
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderApi;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
+import java.util.HashMap;
 
 /**
  * An activity that displays a Google map with a marker (pin) to indicate a particular location.
@@ -39,6 +55,8 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
     LocationRequest mLocationRequest;
     private FusedLocationProviderApi mFusedLocationApi;
     static int REQUEST_LOCATION = 2;
+    Marker myMarker;
+    static int PLACE_PICKER_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +123,7 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
             mFusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             mLastLocation = mFusedLocationApi.getLastLocation(mGoogleApiClient);
             userLoc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            onMapReady(map);
         }
     }
 
@@ -129,11 +148,7 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
         mLastLocation = location;
         userLoc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
-        map.addMarker(new MarkerOptions().position(userLoc)
-                .title("You Are Here"));
-        map.setMaxZoomPreference(30.0f);
-        map.setMaxZoomPreference(10.0f);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 20.0f));
+        onMapReady(map);
 
     }
 
@@ -154,11 +169,16 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
         //
         map = googleMap;
         if (userLoc != null) {
-            googleMap.addMarker(new MarkerOptions().position(userLoc)
-                    .title("You are here"));
-            googleMap.setMaxZoomPreference(20.0f);
-            googleMap.setMaxZoomPreference(10.0f);
+            myMarker = googleMap.addMarker(new MarkerOptions().position(userLoc)
+                    .title("You are here").snippet("Learn more: website"));
+            googleMap.setMaxZoomPreference(30.0f);
+            googleMap.setMinZoomPreference(5.0f);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15.0f));
+
+            GeoJsonPoint point = new GeoJsonPoint(userLoc);
+            HashMap<String, String> properties = new HashMap<String, String>();
+            properties.put("Ocean", "South Atlantic");
+            GeoJsonFeature pointFeature = new GeoJsonFeature(point, "Origin", properties, null);
 
         }
         else {
@@ -168,5 +188,42 @@ public class MapsMarkerActivity extends AppCompatActivity implements ConnectionC
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         }
 
+    }
+
+    public void onSearchNearby(View view) {
+        try {
+            PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+
+            // Start the Intent by requesting a result, identified by a request code.
+            startActivityForResult(intentBuilder.build(this), PLACE_PICKER_REQUEST);
+
+            // Hide the pick option in the UI to prevent users from starting the picker
+            // multiple times.
+            //showPickAction(false);
+
+        } catch (GooglePlayServicesRepairableException e) {
+            Toast.makeText(this, "repairable exception", Toast.LENGTH_LONG).show();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(this, "not available exception", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(this, data);
+                String toastMsg = String.format("Place: %s", place.getName());
+                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+
+                String address1 = place.getLatLng().toString();
+                String address2 = userLoc.toString();
+
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                        Uri.parse("http://maps.google.com/maps?saddr=" + address2 + "&daddr=" + address1));
+                startActivity(intent);
+
+
+            }
+        }
     }
 }
